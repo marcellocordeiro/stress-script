@@ -29,8 +29,11 @@ def subprocessCheckOutput(command):
     return subprocess.run(args, text=True, capture_output=True).stdout.strip()
 
 
-def getFilesWithExtension(path, extension):
-    return pathlib.Path(path).glob(extension)
+def getFilesWithExtension(path, extension, recursively=False):
+    if recursively:
+        return pathlib.Path(path).rglob(extension)
+    else:
+        return pathlib.Path(path).glob(extension)
 
 
 def allowExecutablePermissions(files):

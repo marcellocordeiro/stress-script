@@ -11,6 +11,13 @@ class Failure:
     configuration: str
 
 
+def order(entry):
+    if entry.configuration == 'no-stress':
+        return -1
+    else:
+        return int(entry.configuration)
+
+
 def parseFailures(dir):
     failures = []
 
@@ -36,4 +43,5 @@ def parseFailures(dir):
                     failures.append(Failure(attributes['classname'].strip(
                     ), attributes['name'].strip(), failure.text.strip(), configuration.strip()))
 
+    failures.sort(key=order)
     return failures

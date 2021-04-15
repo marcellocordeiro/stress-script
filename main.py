@@ -42,12 +42,11 @@ def toolMaven(directory, arguments, outputFolder, configFile):
     outputFolder.mkdir(parents=True, exist_ok=True)
 
     # No stress-ng
-    # currentReportFile = outputFolder / 'report.xml'
     testCommand = f"mvn test {arguments}"
     subprocessRun(testCommand, cwd=str(directory), stdout=subprocess.DEVNULL)
 
     reports = getFilesWithExtension(
-        directory / 'target' / 'surefire-reports', '*.xml')
+        directory, 'TEST-*.xml', recursively=True)
     (outputFolder / 'report.no-stress').mkdir(parents=True, exist_ok=True)
     for report in reports:
         shutil.copy(report, outputFolder / 'report.no-stress' / report.name)
@@ -66,8 +65,7 @@ def toolMaven(directory, arguments, outputFolder, configFile):
         subprocessRun(testCommand, cwd=str(directory),
                       stdout=subprocess.DEVNULL)
 
-        reports = getFilesWithExtension(
-            directory / 'target' / 'surefire-reports', '*.xml')
+        reports = getFilesWithExtension(directory, 'TEST-*.xml', recursively=True)
         (outputFolder / f"report.{i}").mkdir(parents=True, exist_ok=True)
         for report in reports:
             shutil.copy(report, outputFolder / f"report.{i}" / report.name)

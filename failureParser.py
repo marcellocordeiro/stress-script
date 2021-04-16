@@ -9,13 +9,14 @@ class Failure:
     name: str
     description: str
     configuration: str
+    runNumber: str
 
 
 def order(entry):
     if entry.configuration == 'no-stress':
-        return -1
+        return (-1, int(entry.runNumber))
     else:
-        return int(entry.configuration)
+        return (int(entry.configuration), int(entry.runNumber))
 
 
 def parseFailures(dir):
@@ -26,6 +27,7 @@ def parseFailures(dir):
             continue
 
         configuration = subDirectory.name.split('.')[1]
+        runNumber = subDirectory.name.split('.')[2]
         xmlFiles = subDirectory.glob('*.xml')
 
         for xmlFile in xmlFiles:
@@ -41,7 +43,7 @@ def parseFailures(dir):
 
                 for failure in testcase.findall('failure'):
                     failures.append(Failure(attributes['classname'].strip(
-                    ), attributes['name'].strip(), failure.text.strip(), configuration.strip()))
+                    ), attributes['name'].strip(), failure.text.strip(), configuration.strip(), runNumber.strip()))
 
     failures.sort(key=order)
     return failures

@@ -10,7 +10,7 @@ def toolMaven(directory, arguments, reportFolder):
     # Copy reports
     reportFolder.mkdir(parents=True, exist_ok=True)
 
-    reports = directory.rglob('TEST-*.xml')
+    reports = directory.rglob("TEST-*.xml")
 
     for report in reports:
         dest = reportFolder / report.name

@@ -13,8 +13,7 @@ from util import subprocessPopen, subprocessRun
 
 
 def noStress(directory, arguments, outputFolder, runNumber, toolFunction):
-    toolFunction(directory, arguments, outputFolder /
-                 f"report.no-stress.{runNumber}")
+    toolFunction(directory, arguments, outputFolder / f"report.no-stress.{runNumber}")
 
 
 def stress(directory, arguments, outputFolder, configFile, runNumber, toolFunction):
@@ -27,8 +26,7 @@ def stress(directory, arguments, outputFolder, configFile, runNumber, toolFuncti
 
         time.sleep(1)
 
-        toolFunction(directory, arguments, outputFolder /
-                     f"report.{i}.{runNumber}")
+        toolFunction(directory, arguments, outputFolder / f"report.{i}.{runNumber}")
 
         stressNgSubprocess.kill()
 
@@ -36,28 +34,30 @@ def stress(directory, arguments, outputFolder, configFile, runNumber, toolFuncti
 def main(args):
     directory = pathlib.Path(args.directory)
     outputFolder = pathlib.Path(
-        args.output_folder if args.output_folder else './output')
+        args.output_folder if args.output_folder else "./output"
+    )
 
     shutil.rmtree(outputFolder, ignore_errors=True)
     outputFolder.mkdir(parents=True, exist_ok=True)
 
-    configFile = pathlib.Path(__file__).parent / 'stressConfigurations.json'
+    configFile = pathlib.Path(__file__).parent / "stressConfigurations.json"
 
-    arguments = ''
+    arguments = ""
 
     noStressRuns = args.no_stress_runs
     stressRuns = args.no_stress_runs
 
-    if args.tool == 'pytest':
+    if args.tool == "pytest":
         pythonSetup(directory)
         toolFunction = toolPytest
-    elif args.tool == 'maven':
+    elif args.tool == "maven":
         toolFunction = toolMaven
     else:
         exit(1)
 
     print(
-        f"Running {args.tool} with {noStressRuns} no-stress runs and {stressRuns} stress runs...")
+        f"Running {args.tool} with {noStressRuns} no-stress runs and {stressRuns} stress runs..."
+    )
 
     for i in range(0, noStressRuns):
         noStress(directory, arguments, outputFolder, i, toolFunction)
@@ -78,39 +78,51 @@ def main(args):
             print(f"classname: {failure.className}")
             print(f"name: {failure.name}")
             print(f"description: {failure.description}")
-            print('==========================')
+            print("==========================")
 
-            if failure.configuration == 'no-stress':
+            if failure.configuration == "no-stress":
                 noStressFailures = noStressFailures + 1
 
-        print('\n--- Summary ---')
-        print(f"{len(failures)} failures in ")
+        print("\n--- Summary ---")
+        print(f"{len(failures)} failures")
         if noStressFailures != 0:
-            print(f"...of which {noStressFailures} failed under normal, no-stress, conditions")
+            print(
+                f"...of which {noStressFailures} failed under normal, no-stress, conditions"
+            )
 
         exit(1)
     else:
         exit(0)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
-        'tool', choices=['pytest', 'maven'], help='specify testing tool')
+        "tool", choices=["pytest", "maven"], help="specify testing tool"
+    )
 
-    parser.add_argument('directory', help='specify directory')
+    parser.add_argument("directory", help="specify directory")
 
-    parser.add_argument('-e', '--extra-arguments',
-                        help="specify extra arguments")
+    parser.add_argument("-e", "--extra-arguments", help="specify extra arguments")
 
-    parser.add_argument('-sr', '--stress-runs', type=int,
-                        default=1, help='specify number of stress runs')
+    parser.add_argument(
+        "-sr",
+        "--stress-runs",
+        type=int,
+        default=1,
+        help="specify number of stress runs",
+    )
 
-    parser.add_argument('-nsr', '--no-stress-runs', type=int,
-                        default=1, help='specify number of no-stress runs')
+    parser.add_argument(
+        "-nsr",
+        "--no-stress-runs",
+        type=int,
+        default=1,
+        help="specify number of no-stress runs",
+    )
 
-    parser.add_argument('-o', '--output-folder', help="specify output folder")
+    parser.add_argument("-o", "--output-folder", help="specify output folder")
 
     args = parser.parse_args()
 

@@ -13,7 +13,7 @@ class Failure:
 
 
 def order(entry):
-    if entry.configuration == 'no-stress':
+    if entry.configuration == "no-stress":
         return (-1, int(entry.runNumber))
     else:
         return (int(entry.configuration), int(entry.runNumber))
@@ -26,24 +26,31 @@ def parseFailures(dir):
         if not subDirectory.is_dir():
             continue
 
-        configuration = subDirectory.name.split('.')[1]
-        runNumber = subDirectory.name.split('.')[2]
-        xmlFiles = subDirectory.glob('*.xml')
+        configuration = subDirectory.name.split(".")[1]
+        runNumber = subDirectory.name.split(".")[2]
+        xmlFiles = subDirectory.glob("*.xml")
 
         for xmlFile in xmlFiles:
             root = ElementTree.parse(xmlFile).getroot()
 
-            testcases = root.findall('testcase')
+            testcases = root.findall("testcase")
 
             if testcases == []:
-                testcases = root.findall('testsuite/testcase')
+                testcases = root.findall("testsuite/testcase")
 
             for testcase in testcases:
                 attributes = testcase.attrib
 
-                for failure in testcase.findall('failure'):
-                    failures.append(Failure(attributes['classname'].strip(
-                    ), attributes['name'].strip(), failure.text.strip(), configuration.strip(), runNumber.strip()))
+                for failure in testcase.findall("failure"):
+                    failures.append(
+                        Failure(
+                            attributes["classname"].strip(),
+                            attributes["name"].strip(),
+                            failure.text.strip(),
+                            configuration.strip(),
+                            runNumber.strip(),
+                        )
+                    )
 
     failures.sort(key=order)
     return failures

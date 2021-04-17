@@ -22,16 +22,16 @@ def order(entry):
 def parse(dir):
     failures = []
 
-    for subDirectory in dir.iterdir():
-        if not subDirectory.is_dir():
+    for sub_directory in dir.iterdir():
+        if not sub_directory.is_dir():
             continue
 
-        config = subDirectory.name.split(".")[1]
-        run_number = subDirectory.name.split(".")[2]
-        xml_files = subDirectory.glob("*.xml")
+        config = sub_directory.name.split(".")[1]
+        run_number = sub_directory.name.split(".")[2]
+        xml_files = sub_directory.glob("*.xml")
 
-        for xmlFile in xml_files:
-            root = ElementTree.parse(xmlFile).getroot()
+        for xml_file in xml_files:
+            root = ElementTree.parse(xml_file).getroot()
 
             testcases = root.findall("testcase")
 

@@ -1,93 +1,67 @@
 #!/usr/bin/env python3
 
-import argparse
-import json
-import pathlib
 import shutil
-import time
+from argparse import ArgumentParser
+from pathlib import Path
 
-from failureParser import parseFailures
-from toolMaven import toolMaven
-from toolPytest import pythonSetup, toolPytest
-from util import subprocessPopen, subprocessRun
-
-
-def noStress(directory, arguments, outputFolder, runNumber, toolFunction):
-    toolFunction(directory, arguments, outputFolder / f"report.no-stress.{runNumber}")
-
-
-def stress(directory, arguments, outputFolder, configFile, runNumber, toolFunction):
-    with open(configFile) as jsonFile:
-        configurations = json.load(jsonFile)
-
-    for i, config in enumerate(configurations):
-        stressNgCommand = f"stress-ng --cpu {config['cpuWorkers']} --cpu-load {config['cpuLoad']} --vm {config['vmWorkers']} --vm-bytes {config['vmBytes']}%"
-        stressNgSubprocess = subprocessPopen(stressNgCommand)
-
-        time.sleep(1)
-
-        toolFunction(directory, arguments, outputFolder / f"report.{i}.{runNumber}")
-
-        stressNgSubprocess.kill()
+import failure_parser
+from tool_maven import Maven
+from tool_pytest import Pytest
 
 
 def main(args):
-    directory = pathlib.Path(args.directory)
-    outputFolder = pathlib.Path(
-        args.output_folder if args.output_folder else "./output"
+    tools = {"pytest": Pytest, "maven": Maven}
+
+    # Environment setup
+    directory = Path(args.directory)
+    output_folder = Path(args.output_folder if args.output_folder else "./output")
+    no_stress_suns = args.no_stress_runs
+    stress_runs = args.no_stress_runs
+    config_file = (
+        Path(__file__).parent / "stressConfigurations.json" if stress_runs > 0 else None
     )
-
-    shutil.rmtree(outputFolder, ignore_errors=True)
-    outputFolder.mkdir(parents=True, exist_ok=True)
-
-    configFile = pathlib.Path(__file__).parent / "stressConfigurations.json"
 
     arguments = ""
 
-    noStressRuns = args.no_stress_runs
-    stressRuns = args.no_stress_runs
+    tool = tools[args.tool](directory, arguments, config_file, output_folder)
 
-    if args.tool == "pytest":
-        pythonSetup(directory)
-        toolFunction = toolPytest
-    elif args.tool == "maven":
-        toolFunction = toolMaven
-    else:
-        exit(1)
+    # Run tests
 
     print(
-        f"Running {args.tool} with {noStressRuns} no-stress runs and {stressRuns} stress runs..."
+        f"Running {args.tool} with {no_stress_suns} no-stress runs and {stress_runs} stress runs..."
     )
 
-    for i in range(0, noStressRuns):
-        noStress(directory, arguments, outputFolder, i, toolFunction)
+    for i in range(0, no_stress_suns):
+        tool.no_stress(i)
 
-    for i in range(0, stressRuns):
-        stress(directory, arguments, outputFolder, configFile, i, toolFunction)
+    for i in range(0, stress_runs):
+        tool.stress(i)
 
-    failures = parseFailures(outputFolder)
+    # Describe results
+
+    failures = failure_parser.parse(output_folder)
 
     if len(failures) != 0:
         print("--- The following tests have failed ---")
 
-        noStressFailures = 0
+        no_stress_failures = 0
 
         for failure in failures:
-            print(f"stress-ng configuration: {failure.configuration}")
-            print(f"run number: {failure.runNumber}")
-            print(f"classname: {failure.className}")
+            print(f"stress-ng configuration: {failure.config}")
+            print(f"run number: {failure.run_number}")
+            print(f"classname: {failure.class_name}")
             print(f"name: {failure.name}")
             print(f"description: {failure.description}")
             print("==========================")
 
-            if failure.configuration == "no-stress":
-                noStressFailures = noStressFailures + 1
+            if failure.config == "no-stress":
+                no_stress_failures += 1
 
         print("\n--- Summary ---")
         print(f"{len(failures)} failures")
-        if noStressFailures != 0:
+        if no_stress_failures != 0:
             print(
-                f"...of which {noStressFailures} failed under normal, no-stress, conditions"
+                f"...of which {no_stress_failures} failed under normal, no-stress, conditions"
             )
 
         exit(1)
@@ -96,7 +70,7 @@ def main(args):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
+    parser = ArgumentParser()
 
     parser.add_argument(
         "tool", choices=["pytest", "maven"], help="specify testing tool"

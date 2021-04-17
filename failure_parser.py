@@ -5,32 +5,32 @@ from xml.etree import ElementTree
 
 @dataclass
 class Failure:
-    className: str
+    class_name: str
     name: str
     description: str
-    configuration: str
-    runNumber: str
+    config: str
+    run_number: str
 
 
 def order(entry):
-    if entry.configuration == "no-stress":
-        return (-1, int(entry.runNumber))
+    if entry.config == "no-stress":
+        return (-1, int(entry.run_number))
     else:
-        return (int(entry.configuration), int(entry.runNumber))
+        return (int(entry.config), int(entry.run_number))
 
 
-def parseFailures(dir):
+def parse(dir):
     failures = []
 
     for subDirectory in dir.iterdir():
         if not subDirectory.is_dir():
             continue
 
-        configuration = subDirectory.name.split(".")[1]
-        runNumber = subDirectory.name.split(".")[2]
-        xmlFiles = subDirectory.glob("*.xml")
+        config = subDirectory.name.split(".")[1]
+        run_number = subDirectory.name.split(".")[2]
+        xml_files = subDirectory.glob("*.xml")
 
-        for xmlFile in xmlFiles:
+        for xmlFile in xml_files:
             root = ElementTree.parse(xmlFile).getroot()
 
             testcases = root.findall("testcase")
@@ -47,8 +47,8 @@ def parseFailures(dir):
                             attributes["classname"].strip(),
                             attributes["name"].strip(),
                             failure.text.strip(),
-                            configuration.strip(),
-                            runNumber.strip(),
+                            config.strip(),
+                            run_number.strip(),
                         )
                     )
 

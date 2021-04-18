@@ -18,7 +18,7 @@ def main(args):
     directory = Path(args.directory)
     output_folder = Path(args.output_folder if args.output_folder else "./output")
     no_stress_suns = args.no_stress_runs
-    stress_runs = args.no_stress_runs
+    stress_runs = args.stress_runs
     config_file = (
         Path(__file__).parent / "stressConfigurations.json" if stress_runs > 0 else None
     )

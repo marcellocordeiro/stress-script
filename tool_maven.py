@@ -6,11 +6,11 @@ from util import subprocess_run
 
 class Maven(BaseTool):
     def setup(self):
-        command = "mvn package"
+        command = "mvn package -q"
         subprocess_run(command, cwd=str(self.directory))
 
     def run_tests(self, report_folder):
-        command = f"mvn test {self.arguments}"
+        command = f"mvn test {self.arguments} -q"
         subprocess_run(command, cwd=str(self.directory), stdout=None, stderr=None)
 
     def post_tests(self, report_folder):

@@ -3,7 +3,7 @@
 import shutil
 from argparse import ArgumentParser
 from pathlib import Path
-from colorama import Fore, Back, Style
+# from colorama import Fore, Back, Style
 
 import failure_parser
 from tool_maven import Maven
@@ -29,7 +29,7 @@ def main(args):
     # Run tests
 
     print(
-        f"{Fore.GREEN} Running {args.tool} with {no_stress_suns} no-stress runs and {stress_runs} stress runs... {Style.RESET_ALL}"
+        f"Running {args.tool} with {no_stress_suns} no-stress runs and {stress_runs} stress runs..."
     )
 
     for i in range(0, no_stress_suns):

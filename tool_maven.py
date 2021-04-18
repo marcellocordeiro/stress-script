@@ -7,7 +7,7 @@ from util import subprocess_run
 class Maven(BaseTool):
     def run_tests(self, report_folder):
         command = f"mvn test {self.arguments}"
-        subprocess_run(command, cwd=str(self.directory))
+        subprocess_run(command, cwd=str(self.directory), stdout=None, stderr=None)
 
     def post_tests(self, report_folder):
         # Copy reports

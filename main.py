@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 
+# from colorama import Fore, Back, Style
+import logging
 import shutil
 from argparse import ArgumentParser
 from pathlib import Path
-# from colorama import Fore, Back, Style
 
 import failure_parser
 from tool_maven import Maven
@@ -28,7 +29,8 @@ def main(args):
 
     # Run tests
 
-    print(
+    logging.basicConfig(level=logging.DEBUG)
+    logging.info(
         f"Running {args.tool} with {no_stress_suns} no-stress runs and {stress_runs} stress runs..."
     )
 

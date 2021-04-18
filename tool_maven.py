@@ -5,6 +5,10 @@ from util import subprocess_run
 
 
 class Maven(BaseTool):
+    def setup(self):
+        command = "mvn package"
+        subprocess_run(command, cwd=str(self.directory))
+
     def run_tests(self, report_folder):
         command = f"mvn test {self.arguments}"
         subprocess_run(command, cwd=str(self.directory), stdout=None, stderr=None)

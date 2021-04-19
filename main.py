@@ -57,7 +57,7 @@ def main(args):
             print(f"run number: {failure.run_number}")
             print(f"classname: {failure.class_name}")
             print(f"name: {failure.name}")
-            print(f"description: {failure.description}")
+            print(f"description: {failure.description[:200]}")
             print("==========================")
 
             if failure.config == "no-stress":

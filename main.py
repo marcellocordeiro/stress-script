@@ -5,6 +5,7 @@ import logging
 import shutil
 from argparse import ArgumentParser
 from pathlib import Path
+from time import sleep
 
 import failure_parser
 from tool_maven import Maven
@@ -33,6 +34,8 @@ def main(args):
     logging.info(
         f"Running {args.tool} with {no_stress_suns} no-stress runs and {stress_runs} stress runs..."
     )
+
+    sleep(2)
 
     for i in range(0, no_stress_suns):
         tool.no_stress(i)

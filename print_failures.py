@@ -36,11 +36,14 @@ def print_failures(failures, no_stress_runs, stress_runs, config_size):
 
                 descriptions.add(failure["description"])
 
-            perc_of_no_stress_runs = (no_stress_failures / no_stress_runs) * 100
-            perc_of_stress_runs = (stress_failures / (stress_runs * config_size)) * 100
+            if no_stress_runs > 0:
+                perc_of_no_stress_runs = (no_stress_failures / no_stress_runs) * 100
+                print(f"{'':<7}No stress failures: {no_stress_failures} ({perc_of_no_stress_runs:.2f}%)")
 
-            print(f"{'':<7}No stress failures: {no_stress_failures} ({perc_of_no_stress_runs:.2f}%)")
-            print(f"{'':<7}Stress failures: {stress_failures} ({perc_of_stress_runs:.2f}%)")
+            if stress_runs > 0:
+                perc_of_stress_runs = (stress_failures / (stress_runs * config_size)) * 100
+                print(f"{'':<7}Stress failures: {stress_failures} ({perc_of_stress_runs:.2f}%)")
+
             print(f"\n{'':<7}> Descriptions: {Fore.RED}{Style.BRIGHT}")
             for description in descriptions:
                 for line in description.split("\n"):

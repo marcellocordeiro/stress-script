@@ -7,16 +7,9 @@ from util import subprocess_run
 
 class Maven(BaseTool):
     def setup(self):
-        # command = "mvn compile -q"
-        # command = "mvn clean -fn -U -B install -Drat.skip=true -DskipTests"
-        command = "mvn --update-snapshots --batch-mode --fail-never --quiet -Drat.skip=true clean compile"
-        result = subprocess_run(
-            command, cwd=str(self.directory)
-        ).returncode
-
-        if result != 0:
-            logging.error(f"Compilation returned with error code {result}")
-            exit(result)
+        arguments = "--batch-mode --update-snapshots --fail-never --quiet"
+        command = f"mvn {arguments} clean compile"
+        subprocess_run(command, cwd=str(self.directory))
 
     def run_tests(self, report_folder):
         command = f"mvn test {self.arguments} -q"

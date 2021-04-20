@@ -8,8 +8,10 @@ from util import subprocess_run
 class Maven(BaseTool):
     def setup(self):
         command = "mvn compile -q"
-        result = subprocess_run(command, cwd=str(self.directory), stdout=None, stderr=None).returncode
-        
+        result = subprocess_run(
+            command, cwd=str(self.directory), stdout=None, stderr=None
+        ).returncode
+
         if result != 0:
             logging.error(f"Compilation returned with error code {result}")
             exit(result)

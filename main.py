@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-# from colorama import Fore, Back, Style
 import logging
 import shutil
 from argparse import ArgumentParser
@@ -8,6 +7,7 @@ from pathlib import Path
 from time import sleep
 
 import failure_parser
+from print_failures import print_failures
 from tool_maven import Maven
 from tool_pytest import Pytest
 
@@ -43,33 +43,10 @@ def main(args):
     for i in range(0, stress_runs):
         tool.stress(i)
 
-    # Describe results
-
+    # Show results
     failures = failure_parser.parse(output_folder)
-
     if len(failures) != 0:
-        print("--- The following tests have failed ---")
-
-        no_stress_failures = 0
-
-        for failure in failures:
-            print(f"stress-ng configuration: {failure.config}")
-            print(f"run number: {failure.run_number}")
-            print(f"classname: {failure.class_name}")
-            print(f"name: {failure.name}")
-            print(f"description: {failure.description[:200]}")
-            print("==========================")
-
-            if failure.config == "no-stress":
-                no_stress_failures += 1
-
-        print("\n--- Summary ---")
-        print(f"{len(failures)} failures")
-        if no_stress_failures != 0:
-            print(
-                f"...of which {no_stress_failures} failed under normal, no-stress, conditions"
-            )
-
+        print_failures(failures)
         exit(1)
     else:
         exit(0)

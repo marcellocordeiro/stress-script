@@ -1,33 +1,24 @@
-from dataclasses import dataclass
 from pathlib import Path
 from xml.etree import ElementTree
 
 
-@dataclass
-class Failure:
-    class_name: str
-    name: str
-    description: str
-    config: str
-    run_number: str
-
-
 def order(entry):
-    if entry.config == "no-stress":
-        return (-1, int(entry.run_number))
+    if entry["config"] == "no-stress":
+        return (-1, int(entry["run_number"]))
     else:
-        return (int(entry.config), int(entry.run_number))
+        return (int(entry["config"]), int(entry["run_number"]))
 
 
 def parse(dir):
-    failures = []
+    failures = dict()
 
     for sub_directory in dir.iterdir():
         if not sub_directory.is_dir():
             continue
 
-        config = sub_directory.name.split(".")[1]
-        run_number = sub_directory.name.split(".")[2]
+        config = sub_directory.name.split(".")[1].strip()
+        run_number = sub_directory.name.split(".")[2].strip()
+
         xml_files = sub_directory.glob("*.xml")
 
         for xml_file in xml_files:
@@ -41,16 +32,40 @@ def parse(dir):
             for testcase in testcases:
                 attributes = testcase.attrib
 
-                for failure in testcase.findall("failure"):
-                    failures.append(
-                        Failure(
-                            attributes["classname"].strip(),
-                            attributes["name"].strip(),
-                            failure.text.strip(),
-                            config.strip(),
-                            run_number.strip(),
-                        )
-                    )
+                class_name = attributes["classname"].strip()
+                name = attributes["name"].strip()
 
-    failures.sort(key=order)
+                for failure in testcase.findall("failure"):
+                    description = failure.text.strip()
+
+                    key = class_name
+                    key2 = name
+                    value = [
+                        {
+                            "config": config,
+                            "run_number": run_number,
+                            "description": description[:200],
+                        }
+                    ]
+
+                    if key not in failures:
+                        failures[key] = dict()
+                        failures[key][key2] = value
+                    else:
+                        if key2 not in failures[key]:
+                            failures[key][key2] = value
+                        else:
+                            failures[key][key2].extend(value)
+
+    for key in failures:
+        for key2 in failures[key]:
+            failures[key][key2].sort(key=order)
+
     return failures
+
+
+"""import json
+failures = parse(Path("./output"))
+print(json.dumps(failures, indent = 4))
+import print_failures
+print_failures.print_failures(failures)"""

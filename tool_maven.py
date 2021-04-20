@@ -9,7 +9,7 @@ class Maven(BaseTool):
     def setup(self):
         # command = "mvn compile -q"
         # command = "mvn clean -fn -U -B install -Drat.skip=true -DskipTests"
-        command = "mvn clean -fn -U -B compile -Drat.skip=true -q"
+        command = "mvn clean -U -B compile -Drat.skip=true -q"
         result = subprocess_run(
             command, cwd=str(self.directory)
         ).returncode

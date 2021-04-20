@@ -7,9 +7,10 @@ from util import subprocess_run
 
 class Maven(BaseTool):
     def setup(self):
-        command = "mvn compile -q"
+        # command = "mvn compile -q"
+        command = "mvn clean -fn -U -B install -Drat.skip=true -DskipTests"
         result = subprocess_run(
-            command, cwd=str(self.directory), stdout=None, stderr=None
+            command, cwd=str(self.directory)
         ).returncode
 
         if result != 0:
@@ -18,7 +19,7 @@ class Maven(BaseTool):
 
     def run_tests(self, report_folder):
         command = f"mvn test {self.arguments} -q"
-        subprocess_run(command, cwd=str(self.directory), stdout=None, stderr=None)
+        subprocess_run(command, cwd=str(self.directory))
 
     def post_tests(self, report_folder):
         # Copy reports

@@ -18,7 +18,7 @@ def main(args):
     # Environment setup
     directory = Path(args.directory)
     output_folder = Path(args.output_folder if args.output_folder else "./output")
-    no_stress_suns = args.no_stress_runs
+    no_stress_runs = args.no_stress_runs
     stress_runs = args.stress_runs
     config_file = (
         Path(__file__).parent / "stressConfigurations.json" if stress_runs > 0 else None
@@ -32,12 +32,12 @@ def main(args):
 
     logging.basicConfig(level=logging.DEBUG)
     logging.info(
-        f"Running {args.tool} with {no_stress_suns} no-stress runs and {stress_runs} stress runs..."
+        f"Running {args.tool} with {no_stress_runs} no-stress runs and {stress_runs} stress runs..."
     )
 
     sleep(2)
 
-    for i in range(0, no_stress_suns):
+    for i in range(0, no_stress_runs):
         tool.no_stress(i)
 
     for i in range(0, stress_runs):
@@ -46,7 +46,7 @@ def main(args):
     # Show results
     failures = failure_parser.parse(output_folder)
     if len(failures) != 0:
-        print_failures(failures)
+        print_failures(failures, no_stress_runs, stress_runs, 4)
         exit(1)
     else:
         exit(0)

@@ -68,4 +68,4 @@ def parse(dir):
 failures = parse(Path("./output"))
 print(json.dumps(failures, indent = 4))
 import print_failures
-print_failures.print_failures(failures)"""
+print_failures.print_failures(failures, 1, 1, 4)"""

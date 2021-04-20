@@ -1,8 +1,8 @@
 from colorama import Fore, Style, init
 
 
-def print_failures(failures, no_stress_runs=1, stress_runs=1, config_size=4):
-    init()
+def print_failures(failures, no_stress_runs, stress_runs, config_size):
+    #init()
 
     module_colour = Fore.RED
     function_colour = Fore.GREEN
@@ -36,8 +36,11 @@ def print_failures(failures, no_stress_runs=1, stress_runs=1, config_size=4):
 
                 descriptions.add(failure["description"])
 
-            print(f"{'':<7}No stress failures: {no_stress_failures}")
-            print(f"{'':<7}Stress failures: {stress_failures}")
+            perc_of_no_stress_runs = (no_stress_failures / no_stress_runs) * 100
+            perc_of_stress_runs = (stress_failures / (stress_runs * config_size)) * 100
+
+            print(f"{'':<7}No stress failures: {no_stress_failures} ({perc_of_no_stress_runs:.2f}%)")
+            print(f"{'':<7}Stress failures: {stress_failures} ({perc_of_stress_runs:.2f}%)")
             print(f"\n{'':<7}> Descriptions: {Fore.RED}{Style.BRIGHT}")
             for description in descriptions:
                 for line in description.split("\n"):

@@ -67,7 +67,7 @@ if __name__ == "__main__":
         "-sr",
         "--stress-runs",
         type=int,
-        default=1,
+        default=3,
         help="specify number of stress runs",
     )
 

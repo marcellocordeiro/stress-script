@@ -7,12 +7,13 @@ from util import subprocess_run
 
 class Maven(BaseTool):
     def setup(self):
-        arguments = "--batch-mode --update-snapshots --fail-never --quiet"
-        command = f"mvn {arguments} clean compile"
+        arguments = "--batch-mode --update-snapshots --fail-never --quiet -DskipTests"
+        command = f"mvn {arguments} clean install"
         subprocess_run(command, cwd=str(self.directory))
 
     def run_tests(self, report_folder):
-        command = f"mvn test {self.arguments} -q"
+        arguments = "--batch-mode ---fail-never --quiet"
+        command = f"mvn {arguments} test"
         subprocess_run(command, cwd=str(self.directory))
 
     def post_tests(self, report_folder):

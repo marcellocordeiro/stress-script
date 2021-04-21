@@ -12,8 +12,7 @@ class Maven(BaseTool):
         subprocess_run(command, cwd=str(self.directory))
 
     def run_tests(self, report_folder):
-        arguments = "--batch-mode ---fail-never --quiet"
-        command = f"mvn {arguments} test"
+        command = f"mvn --quiet test"
         subprocess_run(command, cwd=str(self.directory))
 
     def post_tests(self, report_folder):

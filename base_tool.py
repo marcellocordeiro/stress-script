@@ -5,19 +5,19 @@ from util import subprocess_Popen
 
 
 class BaseTool:
-    def __init__(self, directory, arguments, configs, output_folder):
+    def __init__(self, directory, extra_arguments, configs, output_folder):
         self.directory = directory
-        self.arguments = arguments
+        self.extra_arguments = extra_arguments
         self.configs = configs
         self.output_folder = output_folder
         self.stress_ng_process = None
 
+        # Clear the output folder
         shutil.rmtree(self.output_folder, ignore_errors=True)
         self.output_folder.mkdir(parents=True, exist_ok=True)
-
+        
         self.setup()
 
-    # stress-ng functions
     def start_stress_ng(self, config):
         command = f"stress-ng --cpu {config['cpuWorkers']} --cpu-load {config['cpuLoad']} --vm {config['vmWorkers']} --vm-bytes {config['vmBytes']}%"
         print(f"> {command}")

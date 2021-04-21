@@ -2,7 +2,6 @@
 
 import json
 import logging
-import shutil
 from argparse import ArgumentParser
 from pathlib import Path
 from time import sleep
@@ -18,6 +17,7 @@ def main(args):
 
     # Environment setup
     directory = Path(args.directory)
+    extra_arguments = args.extra_arguments
     output_folder = Path(args.output_folder if args.output_folder else "./output")
     no_stress_runs = args.no_stress_runs
     stress_runs = args.stress_runs
@@ -26,11 +26,8 @@ def main(args):
     with open(config_file) as json_file:
         configs = json.load(json_file)
 
-    arguments = ""
-
-    tool = tools[args.tool](directory, arguments, configs, output_folder)
-
-    # Run tests
+    # Construct tool object and set it up
+    tool = tools[args.tool](directory, extra_arguments, configs, output_folder)
 
     logging.basicConfig(level=logging.DEBUG)
     logging.info(
@@ -39,6 +36,7 @@ def main(args):
 
     sleep(2)
 
+    # Run tests
     for i in range(0, no_stress_runs):
         tool.no_stress(i)
 

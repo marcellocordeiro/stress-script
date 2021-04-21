@@ -3,12 +3,14 @@ from xml.etree import ElementTree
 
 
 def order(entry):
+    # Sort by configuration then run number
     if entry["config"] == "no-stress":
         return (-1, int(entry["run_number"]))
     else:
         return (int(entry["config"]), int(entry["run_number"]))
 
 
+# Parses all xml files in the project folder
 def parse(dir):
     failures = dict()
 
@@ -16,6 +18,7 @@ def parse(dir):
         if not sub_directory.is_dir():
             continue
 
+        # report.configuration.run_number
         config = sub_directory.name.split(".")[1].strip()
         run_number = sub_directory.name.split(".")[2].strip()
 

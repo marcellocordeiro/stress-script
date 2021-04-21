@@ -2,11 +2,6 @@ from colorama import Fore, Style, init
 
 
 def print_failures(failures, no_stress_runs, stress_runs, config_size):
-    #init()
-
-    module_colour = Fore.RED
-    function_colour = Fore.GREEN
-
     total_no_stress_failures = 0
     total_stress_failures = 0
 
@@ -14,13 +9,11 @@ def print_failures(failures, no_stress_runs, stress_runs, config_size):
 
     for module in failures:
         print(
-            f"==== Failure in module {module_colour}{Style.BRIGHT}{module}{Fore.RESET}{Style.RESET_ALL} ===="
+            f"==== Failure in module {Fore.RED}{Style.BRIGHT}{module}{Fore.RESET}{Style.RESET_ALL} ===="
         )
 
         for test_case in failures[module]:
-            print(
-                f"{'':<5}> at {function_colour}{Style.BRIGHT}{test_case}{Style.RESET_ALL}"
-            )
+            print(f"{'':<5}> at {Fore.GREEN}{Style.BRIGHT}{test_case}{Style.RESET_ALL}")
 
             function_failures = failures[module][test_case]
 
@@ -40,11 +33,17 @@ def print_failures(failures, no_stress_runs, stress_runs, config_size):
 
             if no_stress_runs > 0:
                 perc_of_no_stress_runs = (no_stress_failures / no_stress_runs) * 100
-                print(f"{'':<7}No stress failures: {no_stress_failures} ({perc_of_no_stress_runs:.2f}%)")
+                print(
+                    f"{'':<7}No stress failures: {no_stress_failures} ({perc_of_no_stress_runs:.2f}%)"
+                )
 
             if stress_runs > 0:
-                perc_of_stress_runs = (stress_failures / (stress_runs * config_size)) * 100
-                print(f"{'':<7}Stress failures: {stress_failures} ({perc_of_stress_runs:.2f}%)")
+                perc_of_stress_runs = (
+                    stress_failures / (stress_runs * config_size)
+                ) * 100
+                print(
+                    f"{'':<7}Stress failures: {stress_failures} ({perc_of_stress_runs:.2f}%)"
+                )
 
             print(f"\n{'':<7}> Descriptions: {Fore.RED}{Style.BRIGHT}")
             for description in descriptions:

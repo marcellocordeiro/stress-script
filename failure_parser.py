@@ -47,7 +47,7 @@ def parse(dir):
                         {
                             "config": config,
                             "run_number": run_number,
-                            "description": description[:200],
+                            "description": description,
                         }
                     ]
 

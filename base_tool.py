@@ -1,4 +1,3 @@
-import json
 import shutil
 from time import sleep
 
@@ -6,15 +5,12 @@ from util import subprocess_Popen
 
 
 class BaseTool:
-    def __init__(self, directory, arguments, config_file, output_folder):
+    def __init__(self, directory, arguments, configs, output_folder):
         self.directory = directory
         self.arguments = arguments
+        self.configs = configs
         self.output_folder = output_folder
         self.stress_ng_process = None
-
-        if config_file:
-            with open(config_file) as json_file:
-                self.configurations = json.load(json_file)
 
         shutil.rmtree(self.output_folder, ignore_errors=True)
         self.output_folder.mkdir(parents=True, exist_ok=True)
@@ -39,7 +35,7 @@ class BaseTool:
         self.post_tests(report_folder)
 
     def stress(self, run_number):
-        for i, config in enumerate(self.configurations):
+        for i, config in enumerate(self.configs):
             report_folder = self.output_folder / f"report.{i}.{run_number}"
 
             self.start_stress_ng(config)

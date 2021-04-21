@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import json
 import logging
 import shutil
 from argparse import ArgumentParser
@@ -20,13 +21,14 @@ def main(args):
     output_folder = Path(args.output_folder if args.output_folder else "./output")
     no_stress_runs = args.no_stress_runs
     stress_runs = args.stress_runs
-    config_file = (
-        Path(__file__).parent / "stressConfigurations.json" if stress_runs > 0 else None
-    )
+    config_file = Path(__file__).parent / "stressConfigurations.json"
+
+    with open(config_file) as json_file:
+        configs = json.load(json_file)
 
     arguments = ""
 
-    tool = tools[args.tool](directory, arguments, config_file, output_folder)
+    tool = tools[args.tool](directory, arguments, configs, output_folder)
 
     # Run tests
 
@@ -58,11 +60,9 @@ if __name__ == "__main__":
     parser.add_argument(
         "tool", choices=["pytest", "maven"], help="specify testing tool"
     )
-
     parser.add_argument("directory", help="specify directory")
-
     parser.add_argument("-e", "--extra-arguments", help="specify extra arguments")
-
+    parser.add_argument("-o", "--output-folder", help="specify output folder")
     parser.add_argument(
         "-sr",
         "--stress-runs",
@@ -70,7 +70,6 @@ if __name__ == "__main__":
         default=3,
         help="specify number of stress runs",
     )
-
     parser.add_argument(
         "-nsr",
         "--no-stress-runs",
@@ -78,8 +77,6 @@ if __name__ == "__main__":
         default=1,
         help="specify number of no-stress runs",
     )
-
-    parser.add_argument("-o", "--output-folder", help="specify output folder")
 
     args = parser.parse_args()
 

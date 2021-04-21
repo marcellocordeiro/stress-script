@@ -10,6 +10,8 @@ def print_failures(failures, no_stress_runs, stress_runs, config_size):
     total_no_stress_failures = 0
     total_stress_failures = 0
 
+    print("")
+
     for module in failures:
         print(
             f"==== Failure in module {module_colour}{Style.BRIGHT}{module}{Fore.RESET}{Style.RESET_ALL} ===="

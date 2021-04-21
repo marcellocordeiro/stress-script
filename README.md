@@ -1,4 +1,6 @@
-# stress-script
+# shaker-standalone
+
+Shaker is a script that detects flakiness in codebases by introducing noise and load to the execution environment. It currently supports pytest and Maven. For each stress run, it will run the tests once for each one of the 4 stress configurations.
 
 ## Usage
 
@@ -18,4 +20,25 @@ optional arguments:
   -sr STRESS_RUNS, --stress-runs STRESS_RUNS
                         specify number of stress runs
   -nsr NO_STRESS_RUNS, --no-stress-runs NO_STRESS_RUNS
-                        specify number of no-stress runs```
+                        specify number of no-stress runs
+```
+
+## Example
+
+In this example, Shaker ran the tests 17 times: 1 no-stress runs and 4 (* 4 configurations) stress runs. All no-stress runs were successful but 4 out of the 16 stress runs failed due to an assertion error. If the same test failed with different issues, the errors will be reported as well.
+
+```
+$ ./shaker.py --no-stress-runs 1 --stress-runs 4 maven "project/path"
+
+==== Failure in module com.project.MyModule ====
+     > at testExample
+       No stress failures: 0 (0.00%)
+       Stress failures: 4 (25.00%)
+
+       > Descriptions: 
+         java.lang.AssertionError: null
+         	at org.testng.Assert.fail(Assert.java:89)
+         	at org.testng.Assert.assertNotEquals(Assert.java:739)
+         	at org.testng.Assert.assertNotEquals(Assert.java:744)
+         	at com.project.MyModule.testExample(MyModule.java:100)
+```
